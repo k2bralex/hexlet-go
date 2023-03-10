@@ -1,0 +1,2 @@
+time="2023-03-10T19:49:54+03:00" level=warning msg="Sum overflows int" x=1 y=9223372036854775807
+time="2023-03-10T19:50:07+03:00" level=warning msg="Sum overflows int" x=9223372036854775797 y=700

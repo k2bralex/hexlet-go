@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/sirupsen/logrus"
+	. "hexlet/web/crud/model"
 	"log"
 	"os"
 )
@@ -19,12 +20,17 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		err = file.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(file)
 
 	webApp := fiber.New()
 	webApp.Use(requestid.New())
 	webApp.Use(logger.New(logger.Config{
-		Format: "${time}: ${status} ${method} ${path} ${locals:requestid}\n",
+		Format: "$[{time}]: ${status} ${method} ${path} ${locals:requestid}\n",
 		Output: file,
 	}))
 

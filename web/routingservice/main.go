@@ -23,36 +23,39 @@ var links = make(map[string]string)
 func main() {
 	webApp := fiber.New(fiber.Config{Immutable: true})
 	webApp.Get("/", func(c *fiber.Ctx) error {
-		return c.SendStatus(200)
+		return c.SendStatus(fiber.StatusOK)
 	})
 
-	webApp.Get("/links/:external", func(ctx *fiber.Ctx) error {
-		ext := ctx.Params("external")
-		decoded, err := url.QueryUnescape(ext)
-		if err != nil {
-			return ctx.SendStatus(http.StatusBadRequest)
-		}
-
-		if _, ok := links[decoded]; !ok {
-			ctx.Status(http.StatusNotFound)
-			return ctx.SendString("Link not found")
-		}
-
-		ctx.Status(http.StatusOK)
-		return ctx.JSON(GetLinkResponse{
-			Internal: links[decoded],
-		})
-	})
-
-	webApp.Post("/links", func(ctx *fiber.Ctx) error {
-		var request CreateLinkRequest
-		if err := ctx.BodyParser(&request); err != nil {
-			ctx.Status(http.StatusBadRequest)
-			return ctx.SendString("Invalid JSON")
-		}
-		links[request.External] = request.Internal
-		return ctx.SendStatus(http.StatusOK)
-	})
+	webApp.Get("/links/:external", GetLink)
+	webApp.Post("/links", CreateLink)
 
 	logrus.Fatal(webApp.Listen(":8080"))
+}
+
+func GetLink(ctx *fiber.Ctx) error {
+	ext := ctx.Params("external")
+	decoded, err := url.QueryUnescape(ext)
+	if err != nil {
+		return ctx.SendStatus(fiber.StatusBadRequest)
+	}
+
+	if _, ok := links[decoded]; !ok {
+		ctx.Status(fiber.StatusNotFound)
+		return ctx.SendString("link not found")
+	}
+
+	ctx.Status(http.StatusOK)
+	return ctx.JSON(GetLinkResponse{
+		Internal: links[decoded],
+	})
+}
+
+func CreateLink(ctx *fiber.Ctx) error {
+	var request CreateLinkRequest
+	if err := ctx.BodyParser(&request); err != nil {
+		ctx.Status(fiber.StatusBadRequest)
+		return ctx.SendString("invalid JSON")
+	}
+	links[request.External] = request.Internal
+	return ctx.SendStatus(fiber.StatusOK)
 }

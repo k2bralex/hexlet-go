@@ -1,0 +1,20 @@
+POST http://localhost:8080/tasks
+Content-Type: application/json
+
+{"description": "Learn Go", "deadline": 1620000000}
+
+###
+
+PATCH http://localhost:8080/tasks/1
+Content-Type: application/jsonson
+
+{"description": "Learn Go and Fiber", "deadline": 1630000000}
+
+###
+
+GET http://localhost:8080/tasks/1
+Accept: application/json
+
+{"id":1,"description":"Learn Go and Fiber","deadline":1630000000}
+
+###

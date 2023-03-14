@@ -1,28 +1,30 @@
 package model
 
+import "github.com/satori/go.uuid"
+
 type (
 	GetTaskResponse struct {
-		ID       int64  `json:"id"`
-		Desc     string `json:"description"`
-		Deadline int64  `json:"deadline"`
+		UUID     uuid.UUID `json:"id"`
+		Desc     string    `json:"description"`
+		Deadline int64     `json:"deadline"`
 	}
 
 	CreateTaskRequest struct {
-		Desc     string `json:"description"`
-		Deadline int64  `json:"deadline"`
+		Desc     string `json:"description" validate:"required"`
+		Deadline int64  `json:"deadline" validate:""`
 	}
 
 	CreateTaskResponse struct {
-		ID int64 `json:"id"`
+		UUID int64 `json:"id" validate:"required, uuid4_rfc4122"`
 	}
 
 	UpdateTaskRequest struct {
-		Desc     string `json:"description"`
-		Deadline int64  `json:"deadline"`
+		Desc     string `json:"description" validate:"required"`
+		Deadline int64  `json:"deadline" validate:""`
 	}
 
 	Task struct {
-		ID       int64
+		UUID     uuid.UUID
 		Desc     string
 		Deadline int64
 	}

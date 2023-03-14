@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
+	"github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
 	. "hexlet/web/crud/model"
 	"log"
@@ -12,7 +13,7 @@ import (
 
 var (
 	taskIDCounter int64 = 1
-	tasks               = make(map[int64]Task)
+	tasks               = make(map[uuid.UUID]Task)
 )
 
 func main() {
@@ -54,15 +55,16 @@ func Create(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	tasks[taskIDCounter] = Task{
-		ID:       taskIDCounter,
+	newUUID := uuid.NewV4()
+	tasks[newUUID] = Task{
+		UUID:     newUUID,
 		Desc:     create.Desc,
 		Deadline: create.Deadline,
 	}
 	taskIDCounter++
 
 	ctx.Status(fiber.StatusOK)
-	return ctx.JSON(CreateTaskResponse{ID: taskIDCounter - 1})
+	return ctx.JSON(CreateTaskResponse{UUID: taskIDCounter})
 }
 
 func Update(ctx *fiber.Ctx) error {
@@ -72,52 +74,52 @@ func Update(ctx *fiber.Ctx) error {
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
 
-	id, err := ctx.ParamsInt("id")
+	id, err := uuid.FromString(ctx.Params("id"))
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
 
-	task, ok := tasks[int64(id)]
+	task, ok := tasks[id]
 	if !ok {
 		return ctx.SendStatus(fiber.StatusNotFound)
 	}
 
 	task.Desc = update.Desc
 	task.Deadline = update.Deadline
-	tasks[task.ID] = task
+	tasks[task.UUID] = task
 
 	return ctx.SendStatus(fiber.StatusOK)
 }
 
 func Read(ctx *fiber.Ctx) error {
-	id, err := ctx.ParamsInt("id")
+	id, err := uuid.FromString(ctx.Params("id"))
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
 
-	task, ok := tasks[int64(id)]
+	task, ok := tasks[id]
 	if !ok {
 		return ctx.SendStatus(fiber.StatusNotFound)
 	}
 
 	ctx.Status(fiber.StatusOK)
 	return ctx.JSON(GetTaskResponse{
-		ID:       task.ID,
+		UUID:     task.UUID,
 		Desc:     task.Desc,
 		Deadline: task.Deadline,
 	})
 }
 
 func Delete(ctx *fiber.Ctx) error {
-	id, err := ctx.ParamsInt("id")
+	id, err := uuid.FromString(ctx.Params("id"))
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
 
-	if _, ok := tasks[int64(id)]; !ok {
+	if _, ok := tasks[id]; !ok {
 		return ctx.SendStatus(fiber.StatusNotFound)
 	}
 
-	delete(tasks, int64(id))
+	delete(tasks, id)
 	return ctx.SendStatus(fiber.StatusOK)
 }

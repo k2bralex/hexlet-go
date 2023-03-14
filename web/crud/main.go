@@ -44,15 +44,15 @@ func main() {
 		return c.SendStatus(200)
 	})
 
-	webApp.Post("/tasks", create)
-	webApp.Patch("/tasks/:id", update)
-	webApp.Get("/tasks/:id", read)
-	webApp.Delete("/tasks/:id", delete)
+	webApp.Post("/tasks", Create)
+	webApp.Patch("/tasks/:id", Update)
+	webApp.Get("/tasks/:id", Read)
+	webApp.Delete("/tasks/:id", Delete)
 
 	logrus.Fatal(webApp.Listen(":8080"))
 }
 
-func create(ctx *fiber.Ctx) error {
+func Create(ctx *fiber.Ctx) error {
 	var create CreateTaskRequest
 	err := ctx.BodyParser(&create)
 	if err != nil {
@@ -70,7 +70,7 @@ func create(ctx *fiber.Ctx) error {
 	return ctx.JSON(CreateTaskResponse{ID: taskIDCounter - 1})
 }
 
-func update(ctx *fiber.Ctx) error {
+func Update(ctx *fiber.Ctx) error {
 	var update UpdateTaskRequest
 	err := ctx.BodyParser(&update)
 	if err != nil {
@@ -94,7 +94,7 @@ func update(ctx *fiber.Ctx) error {
 	return ctx.SendStatus(fiber.StatusOK)
 }
 
-func read(ctx *fiber.Ctx) error {
+func Read(ctx *fiber.Ctx) error {
 	id, err := ctx.ParamsInt("id")
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusBadRequest)
@@ -113,7 +113,7 @@ func read(ctx *fiber.Ctx) error {
 	})
 }
 
-func delete(ctx *fiber.Ctx) error {
+func Delete(ctx *fiber.Ctx) error {
 	id, err := ctx.ParamsInt("id")
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusBadRequest)

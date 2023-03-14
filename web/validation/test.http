@@ -1,0 +1,41 @@
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{"id": 1, "email": "john@doe.com", "age": 25, "country": "USA"}
+
+###
+
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{"id": 5000, "email": "john@doe.com", "age": 130, "country": "Germany"}
+
+###
+
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{"id": 5000, "email": "john@doe.com", "age": 130, "country": "Germany"}
+
+###
+
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{"email": "john@doe.com", "age": 25, "country": "USA"}
+
+###
+
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{"id": -1, "email": "john@doe.com", "age": 25, "country": "USA"}
+
+###
+
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{"id": 1, "age": 25, "country": "USA"}
+
+###

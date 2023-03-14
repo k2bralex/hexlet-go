@@ -1,7 +1,7 @@
 package main
 
 import (
-	fmt "fmt"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/sirupsen/logrus"
@@ -46,4 +46,3 @@ func GetCurrency(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusOK).SendString(
 		fmt.Sprintf("%.2f", exchangeRate[from+"/"+to]))
 }
-

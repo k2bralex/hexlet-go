@@ -1,0 +1,47 @@
+### exchange rate not found 1
+
+GET http://localhost:8080/convert?from=USD&to=GEL
+Accept: text/plain
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.body === "Not Found", "Response string is not \"\"");
+        client.assert(response.status === 404, "Response status is not 404");
+    });
+%}
+
+### exchange rate not found 2
+
+GET http://localhost:8080/convert?from=GEL&to=USD
+Accept: text/plain
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.body === "Not Found", "Response string is not \"\"");
+        client.assert(response.status === 404, "Response status is not 404");
+    });
+%}
+
+### positive 1
+
+GET http://localhost:8080/convert?from=EUR&to=USD
+Accept: text/plain
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.body === "1.25")
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### positive 2
+
+GET http://localhost:8080/convert?from=USD&to=JPY
+Accept: text/plain
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.body === "110.00")
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}

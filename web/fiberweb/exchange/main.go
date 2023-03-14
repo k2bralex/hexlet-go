@@ -1,9 +1,11 @@
 package main
 
 import (
-	"fmt"
+	fmt "fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/sirupsen/logrus"
+	"log"
 	"os"
 )
 
@@ -17,29 +19,31 @@ var exchangeRate = map[string]float64{
 }
 
 func main() {
-	webApp := fiber.New()
-	logger := logrus.New()
-	logger.SetOutput(os.Stdout)
-
-	file, err := os.OpenFile("log.log", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0755)
+	file, err := os.OpenFile(".log", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0755)
 	if err != nil {
-		logger.Fatal(err)
+		log.Fatal(err)
 	}
 	defer file.Close()
-	logger.SetOutput(file)
 
-	webApp.Get("/convert", func(ctx *fiber.Ctx) error {
-		from := ctx.Query("from")
-		to := ctx.Query("to")
+	webApp := fiber.New()
+	webApp.Use(logger.New(logger.Config{
+		Output: file,
+	}))
 
-		if _, ok := exchangeRate[from+"/"+to]; !ok {
-			ctx.Status(404)
-			return ctx.SendString("404 Not Found")
-		}
+	webApp.Get("/convert", GetCurrency)
 
-		ctx.Status(200)
-		return ctx.SendString(fmt.Sprintf("%.2f", exchangeRate[from+"/"+to]))
-	})
-
-	logrus.Fatal(webApp.Listen(":8000"))
+	logrus.Fatal(webApp.Listen(":8080"))
 }
+
+func GetCurrency(ctx *fiber.Ctx) error {
+	from := ctx.Query("from")
+	to := ctx.Query("to")
+
+	if _, ok := exchangeRate[from+"/"+to]; !ok {
+		return ctx.SendStatus(fiber.StatusNotFound)
+	}
+
+	return ctx.Status(fiber.StatusOK).SendString(
+		fmt.Sprintf("%.2f", exchangeRate[from+"/"+to]))
+}
+

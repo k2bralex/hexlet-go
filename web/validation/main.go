@@ -34,6 +34,7 @@ func main() {
 
 	webApp.Post("/users", func(ctx *fiber.Ctx) error {
 		var req CreateUserRequest
+
 		if err := ctx.BodyParser(&req); err != nil {
 			return ctx.Status(fiber.StatusBadRequest).SendString("invalid JSON")
 		}

@@ -2,35 +2,11 @@ package main
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"github.com/sirupsen/logrus"
-)
-
-type (
-	GetTaskResponse struct {
-		ID       int64  `json:"id"`
-		Desc     string `json:"description"`
-		Deadline int64  `json:"deadline"`
-	}
-
-	CreateTaskRequest struct {
-		Desc     string `json:"description"`
-		Deadline int64  `json:"deadline"`
-	}
-
-	CreateTaskResponse struct {
-		ID int64 `json:"id"`
-	}
-
-	UpdateTaskRequest struct {
-		Desc     string `json:"description"`
-		Deadline int64  `json:"deadline"`
-	}
-
-	Task struct {
-		ID       int64
-		Desc     string
-		Deadline int64
-	}
+	"log"
+	"os"
 )
 
 var (
@@ -39,17 +15,30 @@ var (
 )
 
 func main() {
-	webApp := fiber.New()
-	webApp.Get("/", func(c *fiber.Ctx) error {
-		return c.SendStatus(200)
-	})
+	file, err := os.OpenFile(".log", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0755)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
 
+	webApp := fiber.New()
+	webApp.Use(requestid.New())
+	webApp.Use(logger.New(logger.Config{
+		Format: "${time}: ${status} ${method} ${path} ${locals:requestid}\n",
+		Output: file,
+	}))
+
+	webApp.Get("/", ServerAlive)
 	webApp.Post("/tasks", Create)
 	webApp.Patch("/tasks/:id", Update)
 	webApp.Get("/tasks/:id", Read)
 	webApp.Delete("/tasks/:id", Delete)
 
 	logrus.Fatal(webApp.Listen(":8080"))
+}
+
+func ServerAlive(c *fiber.Ctx) error {
+	return c.SendStatus(200)
 }
 
 func Create(ctx *fiber.Ctx) error {

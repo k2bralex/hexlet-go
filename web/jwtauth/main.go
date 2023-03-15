@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"github.com/gofiber/fiber/v2"
+	jwtware "github.com/gofiber/jwt/v3"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/sirupsen/logrus"
 )
@@ -48,13 +49,16 @@ func main() {
 		return c.SendStatus(fiber.StatusOK)
 	})
 
-	// BEGIN (write your solution here) (write your solution here)
+	publicGroup := webApp.Group("")
+	publicGroup.Post("/signup", SignUp)
+	publicGroup.Post("/signin", SignIn)
 
-	webApp.Post("/signup", SignUp)
-	webApp.Post("/signin", SignIn)
-	webApp.Get("/profile", ViewProfile)
-
-	// END
+	authorizedGroup := webApp.Group("")
+	authorizedGroup.Use(jwtware.New(jwtware.Config{
+		SigningKey: secretKey,
+		ContextKey: contextKeyUser,
+	}))
+	authorizedGroup.Get("/profile", ViewProfile)
 
 	logrus.Fatal(webApp.Listen(webApiPort))
 }

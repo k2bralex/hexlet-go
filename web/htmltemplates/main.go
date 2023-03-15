@@ -32,7 +32,7 @@ func main() {
 	})
 
 	webApp.Post("/items", Create)
-	webApp.Post("/items/view", ReadAll)
+	webApp.Get("/items/view", ReadAll)
 
 	logrus.Fatal(webApp.Listen(":8080"))
 }
@@ -53,5 +53,5 @@ func Create(ctx *fiber.Ctx) error {
 }
 
 func ReadAll(ctx *fiber.Ctx) error {
-	return ctx.Render("prduct-list", items)
+	return ctx.Render("items", items)
 }

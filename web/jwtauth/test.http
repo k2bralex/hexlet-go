@@ -1,0 +1,17 @@
+### sign up
+POST http://localhost:8080/signup
+Content-Type: application/json
+
+{"email": "john@doe.com", "password": "qwerty123"}
+
+### sign in
+POST http://localhost:8080/signin
+Content-Type: application/json
+
+{"email": "john@doe.com", "password": "qwerty123"}
+
+### authorization
+GET http://localhost:8080/profile
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqb2huQGRvZS5jb20ifQ.VC894ilD9yMhXU_Mn7g5S3YMmm2OPNhf8PD9sa6U97E
+

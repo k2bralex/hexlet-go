@@ -10,8 +10,8 @@ type (
 	}
 
 	CreateTaskRequest struct {
-		Desc     string `json:"description" validate:"required, min=1, max=150"`
-		Deadline int64  `json:"deadline" validate:"required, gt=1678857313"`
+		Desc     string `json:"description" validate:"required,min=1,max=150"`
+		Deadline int64  `json:"deadline" validate:"required,gt=1678857313"`
 	}
 
 	CreateTaskResponse struct {
@@ -19,8 +19,8 @@ type (
 	}
 
 	UpdateTaskRequest struct {
-		Desc     string `json:"description" validate:"required, min=1, max=150"`
-		Deadline int64  `json:"deadline" validate:"required, gt=1678857313"`
+		Desc     string `json:"description" validate:"required,min=1,max=150"`
+		Deadline int64  `json:"deadline" validate:"required,gt=1678857313"`
 	}
 
 	Task struct {

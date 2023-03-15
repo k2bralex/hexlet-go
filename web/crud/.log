@@ -38,3 +38,8 @@ $[{time}]: 200 GET /tasks/b23739b7-34ba-4a88-b746-b6ebdb338bed 381b0523-359a-470
 [08:23:44]: 200 POST /tasks 1bec1f28-e380-4db2-bece-deeef8b883de
 [08:23:47]: 200 POST /tasks 1cec1f28-e380-4db2-bece-deeef8b883de
 [08:24:23]: 200 GET /tasks/4794c5c6-e177-4d68-bc81-86182c0c77e0 1dec1f28-e380-4db2-bece-deeef8b883de
+[08:37:15]: 200 POST /tasks 1aba2595-04be-4bec-a959-a992ab5c99a8
+[08:37:43]: 422 POST /tasks 1bba2595-04be-4bec-a959-a992ab5c99a8
+[08:37:51]: 200 PATCH /tasks/bc24521c-73b5-4938-968b-67c0a9028ec7 1cba2595-04be-4bec-a959-a992ab5c99a8
+[08:37:56]: 200 GET /tasks/bc24521c-73b5-4938-968b-67c0a9028ec7 1dba2595-04be-4bec-a959-a992ab5c99a8
+[08:38:00]: 404 GET /tasks/4794c5c6-e177-4d68-bc81-86182c0c77e0 1eba2595-04be-4bec-a959-a992ab5c99a8

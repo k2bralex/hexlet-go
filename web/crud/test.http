@@ -17,16 +17,16 @@ Content-Type: application/json
 }
 
 ### update data
-PATCH http://localhost:8080/tasks/e1c36d70-fc07-44b2-b6dd-52cafd755e93
+PATCH http://localhost:8080/tasks/bc24521c-73b5-4938-968b-67c0a9028ec7
 Content-Type: application/jsonson
 
 {"description": "Learn Go", "deadline": 1690000000}
 
 ### find correct data
-GET http://localhost:8080/tasks/e1c36d70-fc07-44b2-b6dd-52cafd755e93
+GET http://localhost:8080/tasks/bc24521c-73b5-4938-968b-67c0a9028ec7
 Accept: application/json
 
-{"id":e1c36d70-fc07-44b2-b6dd-52cafd755e93,"description":"Learn Go and Fiber","deadline":1670000000}
+{"id":bc24521c-73b5-4938-968b-67c0a9028ec7,"description":"Learn Go and Fiber","deadline":1670000000}
 
 ### find incorrect data
 GET http://localhost:8080/tasks/4794c5c6-e177-4d68-bc81-86182c0c77e0

@@ -1,0 +1,45 @@
+### Create item #1
+POST http://localhost:8080/items
+Content-Type: application/json
+
+{"name": "item1", "price": 100}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### Create item #2
+POST http://localhost:8080/items
+Content-Type: application/json
+
+{"name": "item2", "price": 300}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+ %}
+
+### Create item #3
+POST http://localhost:8080/items
+Content-Type: application/json
+
+{"name": "item2", "price": 200}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### View items
+GET http://localhost:8080/items/view
+Accept: text/html
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}

@@ -10,17 +10,17 @@ type (
 	}
 
 	CreateTaskRequest struct {
-		Desc     string `json:"description" validate:"required"`
-		Deadline int64  `json:"deadline" validate:""`
+		Desc     string `json:"description" validate:"required, min=1, max=150"`
+		Deadline int64  `json:"deadline" validate:"required, gt=1678857313"`
 	}
 
 	CreateTaskResponse struct {
-		UUID int64 `json:"id" validate:"required, uuid4_rfc4122"`
+		UUID uuid.UUID `json:"id"`
 	}
 
 	UpdateTaskRequest struct {
-		Desc     string `json:"description" validate:"required"`
-		Deadline int64  `json:"deadline" validate:""`
+		Desc     string `json:"description" validate:"required, min=1, max=150"`
+		Deadline int64  `json:"deadline" validate:"required, gt=1678857313"`
 	}
 
 	Task struct {

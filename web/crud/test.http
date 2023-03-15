@@ -1,20 +1,35 @@
+### correct post req
 POST http://localhost:8080/tasks
 Content-Type: application/json
 
-{"description": "Learn Go", "deadline": 1620000000}
+{
+  "description": "Learn Go",
+  "deadline": 1680000000
+}
 
-###
+### incorrect deadline time post req
+POST http://localhost:8080/tasks
+Content-Type: application/json
 
-PATCH http://localhost:8080/tasks/1
+{
+  "description": "Learn Java",
+  "deadline": 1670000000
+}
+
+### update data
+PATCH http://localhost:8080/tasks/e1c36d70-fc07-44b2-b6dd-52cafd755e93
 Content-Type: application/jsonson
 
-{"description": "Learn Go and Fiber", "deadline": 1630000000}
+{"description": "Learn Go", "deadline": 1690000000}
 
-###
-
-GET http://localhost:8080/tasks/1
+### find correct data
+GET http://localhost:8080/tasks/e1c36d70-fc07-44b2-b6dd-52cafd755e93
 Accept: application/json
 
-{"id":1,"description":"Learn Go and Fiber","deadline":1630000000}
+{"id":e1c36d70-fc07-44b2-b6dd-52cafd755e93,"description":"Learn Go and Fiber","deadline":1670000000}
 
-###
+### find incorrect data
+GET http://localhost:8080/tasks/4794c5c6-e177-4d68-bc81-86182c0c77e0
+Accept: application/json
+
+{"id":4794c5c6-e177-4d68-bc81-86182c0c77e0,"description":"Learn Go and Fiber","deadline":1670000000}

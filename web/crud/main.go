@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
@@ -12,8 +13,8 @@ import (
 )
 
 var (
-	taskIDCounter int64 = 1
-	tasks               = make(map[uuid.UUID]Task)
+	tasks    = make(map[uuid.UUID]Task)
+	validate = validator.New()
 )
 
 func main() {
@@ -31,7 +32,7 @@ func main() {
 	webApp := fiber.New()
 	webApp.Use(requestid.New())
 	webApp.Use(logger.New(logger.Config{
-		Format: "$[{time}]: ${status} ${method} ${path} ${locals:requestid}\n",
+		Format: "[${time}]: ${status} ${method} ${path} ${locals:requestid}\n",
 		Output: file,
 	}))
 
@@ -50,9 +51,12 @@ func ServerAlive(c *fiber.Ctx) error {
 
 func Create(ctx *fiber.Ctx) error {
 	var create CreateTaskRequest
-	err := ctx.BodyParser(&create)
-	if err != nil {
-		return err
+	if err := ctx.BodyParser(&create); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).SendString("invalid JSON")
+	}
+
+	if err := validate.Struct(&create); err != nil {
+		return ctx.Status(fiber.StatusUnprocessableEntity).SendString(err.Error())
 	}
 
 	newUUID := uuid.NewV4()
@@ -61,17 +65,19 @@ func Create(ctx *fiber.Ctx) error {
 		Desc:     create.Desc,
 		Deadline: create.Deadline,
 	}
-	taskIDCounter++
 
 	ctx.Status(fiber.StatusOK)
-	return ctx.JSON(CreateTaskResponse{UUID: taskIDCounter})
+	return ctx.JSON(CreateTaskResponse{UUID: newUUID})
 }
 
 func Update(ctx *fiber.Ctx) error {
 	var update UpdateTaskRequest
-	err := ctx.BodyParser(&update)
-	if err != nil {
-		return ctx.SendStatus(fiber.StatusBadRequest)
+	if err := ctx.BodyParser(&update); err != nil {
+		return ctx.Status(fiber.StatusBadRequest).SendString("invalid JSON")
+	}
+
+	if err := validate.Struct(&update); err != nil {
+		return ctx.Status(fiber.StatusUnprocessableEntity).SendString(err.Error())
 	}
 
 	id, err := uuid.FromString(ctx.Params("id"))

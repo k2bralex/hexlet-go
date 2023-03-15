@@ -1,0 +1,35 @@
+### Test1
+POST http://localhost:8080/daterange
+Content-Type: application/json
+
+{
+
+### Test2
+POST http://localhost:8080/daterange
+Content-Type: application/json
+
+{
+  "from": {
+    "format": "test",
+    "value": "25"
+  },
+  "to": {
+    "format": "test",
+    "value": "25"
+  }
+}
+
+### Test3
+POST http://localhost:8080/daterange
+Content-Type: application/json
+
+{
+  "from": {
+    "format": "Jan 2, 2006 at 3:04pm (MST)",
+    "value": "Nov 1, 2022 at 12:59pm (PST)"
+  },
+  "to": {
+    "format": "Jan 2, 2006 at 3:04pm (MST)",
+    "value": "Nov 2, 2022 at 12:59pm (PST)"
+  }
+}

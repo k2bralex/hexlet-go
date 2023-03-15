@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"github.com/gofiber/fiber/v2"
 	jwtware "github.com/gofiber/jwt/v3"
 	"github.com/golang-jwt/jwt/v4"
@@ -76,7 +75,7 @@ func SignUp(ctx *fiber.Ctx) error {
 
 	users[signUpReq.Email] = User{
 		Email:    signUpReq.Email,
-		password: signUpReq.Email,
+		password: signUpReq.Password,
 	}
 	return ctx.SendStatus(fiber.StatusOK)
 }
@@ -85,19 +84,21 @@ func SignIn(ctx *fiber.Ctx) error {
 	var signInReq SignInRequest
 	err := ctx.BodyParser(&signInReq)
 	if err != nil {
-		return ctx.SendStatus(fiber.StatusUnprocessableEntity)
+		return ctx.Status(fiber.StatusUnprocessableEntity).SendString("invalid JSON")
 	}
 
 	user, ok := users[signInReq.Email]
 	if !ok {
-		return ctx.SendStatus(fiber.StatusNotFound)
+		return ctx.SendStatus(fiber.StatusUnprocessableEntity)
 	}
 	if user.password != signInReq.Password {
 		return ctx.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	tkn := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{"sub": user.Email})
-	jwtToken, err := tkn.SignedString(secretKey)
+	jwtToken, err := jwt.NewWithClaims(
+		jwt.SigningMethodHS256,
+		jwt.MapClaims{"sub": user.Email},
+	).SignedString(secretKey)
 	if err != nil {
 		logrus.WithError(err).Error("JWT token signing")
 		return ctx.SendStatus(fiber.StatusInternalServerError)
@@ -107,14 +108,14 @@ func SignIn(ctx *fiber.Ctx) error {
 }
 
 func ViewProfile(ctx *fiber.Ctx) error {
-	payload, ok := jwtPayloadFromRequest(ctx)
+	claims, ok := jwtPayloadFromRequest(ctx)
 	if !ok {
 		return ctx.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	user, ok := users[payload["sub"].(string)]
+	user, ok := users[claims["sub"].(string)]
 	if !ok {
-		return errors.New("user not found")
+		return ctx.SendStatus(fiber.StatusNotFound)
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(ProfileResponse{Email: user.Email})
@@ -129,7 +130,7 @@ func jwtPayloadFromRequest(ctx *fiber.Ctx) (jwt.MapClaims, bool) {
 		return nil, false
 	}
 
-	payload, ok := jwtToken.Claims.(jwt.MapClaims)
+	claims, ok := jwtToken.Claims.(jwt.MapClaims)
 	if !ok {
 		logrus.WithFields(logrus.Fields{
 			"jwt_token_claims": jwtToken.Claims,
@@ -137,5 +138,5 @@ func jwtPayloadFromRequest(ctx *fiber.Ctx) (jwt.MapClaims, bool) {
 		return nil, false
 	}
 
-	return payload, true
+	return claims, true
 }

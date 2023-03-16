@@ -1,10 +1,11 @@
 package main
 
 import (
-	. "base/lessons"
+	. "base/lessons/model"
 	"fmt"
 )
 
 func main() {
-	fmt.Println(GenerateSelfStory("Ivan", 30, 32.12))
+	fmt.Println(CalcArea(&Rectangle{}))
+	fmt.Println(CalcArea(&Circle{R: 3}))
 }
